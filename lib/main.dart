@@ -199,62 +199,82 @@ class _MyHomePageState extends State<MyHomePage> {
                     offset: Offset((-v).toDouble(), v.toDouble()))
             ]);
 
-    scoreboard(player) => Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    List<int> getWinners() {
+      final scores =
+          List.generate(6, (i) => i).map((e) => getPlayerScore(e)).toList();
+      final maxScore = scores.reduce(max);
+
+      return List.generate(6, (i) => (i, scores[i]))
+          .where((playerScore) => playerScore.$2 == maxScore)
+          .map((playerScore) => playerScore.$1)
+          .toList();
+    }
+
+    scoreboard(player) => Column(
           children: [
-            IconButton(
-              iconSize: scoreStyle.fontSize! - 10,
-              onPressed: () => {
-                if (_discard.isEmpty)
-                  {
-                    _showMessage(context,
-                        "You can't go back on the first round of letters.")
-                  }
-                else if ((_actions.last is Win &&
-                        (_actions.last as Win).player != player) &&
-                    _actions.last is! Skip)
-                  {
-                    _showMessage(
-                        context, "Only the player who last scored can go back.")
-                  }
-                else
-                  {
-                    setState(() {
-                      _actions.removeLast();
-                      _viewingAnswers = false;
-                      _deck.insertAll(
-                          0,
-                          _discard.getRange(
-                              _discard.length - 3, _discard.length));
-                      _discard.removeRange(
-                          _discard.length - 3, _discard.length);
-                      _answers = _getSolutions((_deck[0], _deck[1], _deck[2]));
-                    }),
-                  }
-              },
-              // TODO: animate laying down?, settings (player count, animation)
-              icon: const Icon(Icons.remove),
+            if (_deck.isEmpty &&
+                _discard.isNotEmpty &&
+                getWinners().contains(player))
+              const Text(style: TextStyle(fontSize: 30), 'Winner!'),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  iconSize: scoreStyle.fontSize! - 10,
+                  onPressed: () => {
+                    if (_discard.isEmpty)
+                      {
+                        _showMessage(context,
+                            "You can't go back on the first round of letters.")
+                      }
+                    else if ((_actions.last is Win &&
+                            (_actions.last as Win).player != player) &&
+                        _actions.last is! Skip)
+                      {
+                        _showMessage(context,
+                            "Only the player who last scored can go back.")
+                      }
+                    else
+                      {
+                        setState(() {
+                          _actions.removeLast();
+                          _viewingAnswers = false;
+                          _deck.insertAll(
+                              0,
+                              _discard.getRange(
+                                  _discard.length - 3, _discard.length));
+                          _discard.removeRange(
+                              _discard.length - 3, _discard.length);
+                          _answers =
+                              _getSolutions((_deck[0], _deck[1], _deck[2]));
+                        }),
+                      }
+                  },
+                  // TODO: animate laying down?, settings (player count, animation)
+                  icon: const Icon(Icons.remove),
+                ),
+                const SizedBox(width: 7),
+                Text('${getPlayerScore(player)}', style: scoreStyle),
+                const SizedBox(width: 7),
+                IconButton(
+                    iconSize: scoreStyle.fontSize! - 10,
+                    onPressed: () => {
+                          if (_deck.isNotEmpty)
+                            {
+                              setState(() {
+                                _actions.add(Win(player));
+                                _newLetters();
+                              })
+                            }
+                          else
+                            {
+                              _showMessage(context,
+                                  "You need to start a new game to get more letters.")
+                            }
+                        },
+                    icon: const Icon(Icons.add)),
+              ],
             ),
-            const SizedBox(width: 7),
-            Text('${getPlayerScore(player)}', style: scoreStyle),
-            const SizedBox(width: 7),
-            IconButton(
-                iconSize: scoreStyle.fontSize! - 10,
-                onPressed: () => {
-                      if (_deck.isNotEmpty)
-                        {
-                          setState(() {
-                            _actions.add(Win(player));
-                            _newLetters();
-                          })
-                        }
-                      else
-                        {
-                          _showMessage(context,
-                              "You need to start a new game to get more letters.")
-                        }
-                    },
-                icon: const Icon(Icons.add)),
           ],
         );
 
