@@ -320,49 +320,71 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
 
+    final screenSize = MediaQuery.of(context).size;
+
     return SafeArea(
       child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              RotatedBox(quarterTurns: 2, child: scoreboard(1)),
-              const Spacer(),
-              if (_deck.isNotEmpty) ...[
-                letters,
-                RotatedBox(
-                  quarterTurns: 2,
-                  child: letters,
-                ),
-                if (!_viewingAnswers)
-                  TextButton(
-                      onPressed: () => setState(() {
-                            _viewingAnswers = true;
-                          }),
-                      child: const Text("View Solutions"))
-                else if (_answers.isNotEmpty)
-                  SizedBox(
-                    height: 200,
-                    child: ListView.builder(
-                      primary: false,
-                      itemCount: _answers.length,
-                      itemExtent: 25,
-                      itemBuilder: (context, index) => ListTile(
-                        title:
-                            Text(textAlign: TextAlign.center, _answers[index]),
-                        dense: true,
-                        visualDensity: const VisualDensity(vertical: -3),
-                      ),
+        body: Stack(
+          children: [
+            Positioned(
+                top: screenSize.height / 6,
+                right: 0,
+                child: RotatedBox(quarterTurns: 3, child: scoreboard(2))),
+            Positioned(
+                bottom: screenSize.height / 6,
+                right: 0,
+                child: RotatedBox(quarterTurns: 3, child: scoreboard(3))),
+            Positioned(
+                top: screenSize.height / 6,
+                left: 0,
+                child: RotatedBox(quarterTurns: 1, child: scoreboard(4))),
+            Positioned(
+                bottom: screenSize.height / 6,
+                left: 0,
+                child: RotatedBox(quarterTurns: 1, child: scoreboard(5))),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  RotatedBox(quarterTurns: 2, child: scoreboard(1)),
+                  const Spacer(),
+                  if (_deck.isNotEmpty) ...[
+                    letters,
+                    RotatedBox(
+                      quarterTurns: 2,
+                      child: letters,
                     ),
-                  )
-                else
-                  const Text('No solutions found!')
-              ] else
-                startButton,
-              const Spacer(),
-              scoreboard(0),
-            ],
-          ),
+                    if (!_viewingAnswers)
+                      TextButton(
+                          onPressed: () => setState(() {
+                                _viewingAnswers = true;
+                              }),
+                          child: const Text("View Solutions"))
+                    else if (_answers.isNotEmpty)
+                      SizedBox(
+                        height: 200,
+                        child: ListView.builder(
+                          primary: false,
+                          itemCount: _answers.length,
+                          itemExtent: 25,
+                          itemBuilder: (context, index) => ListTile(
+                            title: Text(
+                                textAlign: TextAlign.center, _answers[index]),
+                            dense: true,
+                            visualDensity: const VisualDensity(vertical: -3),
+                          ),
+                        ),
+                      )
+                    else
+                      const Text('No solutions found!')
+                  ] else
+                    startButton,
+                  const Spacer(),
+                  scoreboard(0),
+                ],
+              ),
+            )
+          ],
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => {
