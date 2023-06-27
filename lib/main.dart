@@ -232,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     }),
                   }
               },
-              // TODO: animate laying down?, more than 2 player
+              // TODO: animate laying down?, settings (player count, animation)
               icon: const Icon(Icons.remove),
             ),
             const SizedBox(width: 7),
@@ -354,15 +354,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       quarterTurns: 2,
                       child: letters,
                     ),
-                    if (!_viewingAnswers)
-                      TextButton(
-                          onPressed: () => setState(() {
-                                _viewingAnswers = true;
-                              }),
-                          child: const Text("View Solutions"))
-                    else if (_answers.isNotEmpty)
+                    TextButton(
+                        onPressed: () => setState(() {
+                              _viewingAnswers = !_viewingAnswers;
+                            }),
+                        child: Text(
+                            "${_viewingAnswers ? "Hide" : "Show"} Solutions")),
+                    if (_viewingAnswers && _answers.isNotEmpty)
                       SizedBox(
                         height: 200,
+                        width: (screenSize.width * 2.0 / 3),
                         child: ListView.builder(
                           primary: false,
                           itemCount: _answers.length,
@@ -375,7 +376,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           ),
                         ),
                       )
-                    else
+                    else if (_viewingAnswers && _answers.isEmpty)
                       const Text('No solutions found!')
                   ] else
                     startButton,
