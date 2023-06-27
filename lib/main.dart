@@ -369,6 +369,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   RotatedBox(quarterTurns: 2, child: scoreboard(1)),
                   const Spacer(),
                   if (_deck.isNotEmpty) ...[
+                    SizedBox(
+                      width: screenSize.width * 2 / 3,
+                      child: LinearProgressIndicator(
+                        value: _discard.length /
+                            Letter.freqs.reduce((e1, e2) => e1 + e2),
+                      ),
+                    ),
                     letters,
                     RotatedBox(
                       quarterTurns: 2,
