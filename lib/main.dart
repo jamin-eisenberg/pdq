@@ -144,9 +144,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<String> _getSolutions((Letter, Letter, Letter) letters) {
     var regexForward = RegExp(
-        '${letters.$1.toString()}.*${letters.$2.toString()}.*${letters.$3.toString()}.*');
+        '${letters.$1.toString() == "X" ? "E?" : ""}${letters.$1.toString()}.*${letters.$2.toString()}.*${letters.$3.toString()}.*');
     var regexBackward = RegExp(
-        '${letters.$3.toString()}.*${letters.$2.toString()}.*${letters.$1.toString()}.*');
+        '${letters.$1.toString() == "X" ? "E?" : ""}${letters.$3.toString()}.*${letters.$2.toString()}.*${letters.$1.toString()}.*');
 
     return wordlist
         .where((word) => regexForward.matchAsPrefix(word) != null)
@@ -222,18 +222,17 @@ class _MyHomePageState extends State<MyHomePage> {
                     setState(() {
                       _actions.removeLast();
                       _viewingAnswers = false;
-                      _answers = _getSolutions(
-                          (_discard[0], _discard[1], _discard[2]));
                       _deck.insertAll(
                           0,
                           _discard.getRange(
                               _discard.length - 3, _discard.length));
                       _discard.removeRange(
                           _discard.length - 3, _discard.length);
+                      _answers = _getSolutions((_deck[0], _deck[1], _deck[2]));
                     }),
                   }
               },
-              // TODO: solutions for Es in front of Xs, animate laying down?, more than 2 player
+              // TODO: animate laying down?, more than 2 player
               icon: const Icon(Icons.remove),
             ),
             const SizedBox(width: 7),
